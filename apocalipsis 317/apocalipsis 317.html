@@ -2,10 +2,10 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Greed and Steal: Apocalipsis 3:17 - Ep.1</title>
+<title>THE HORROR OF MISERY: Apocalipsis 3:17 - Ep.1</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-
+ 
   * { box-sizing: border-box; }
   html,body{
     margin:0; padding:0; width:100%; height:100%;
@@ -27,7 +27,7 @@
     padding:20px;
   }
   .screen.active{ display:flex; }
-
+ 
   /* ---- Titulo ---- */
   #titulo{ background:#0f0f0f; }
   #titulo h1{
@@ -36,14 +36,14 @@
   }
   #titulo p{ color:#00ffcc; font-size:.7em; margin-top:30px; animation:parpadeo 1.2s infinite; }
   @keyframes parpadeo{ 0%,100%{opacity:1;} 50%{opacity:0;} }
-
+ 
   /* ---- Fondos de escena ---- */
   .escena-negra{ background:#000; }
   .escena-oficina{ background:linear-gradient(#3a0000,#000); }
   .escena-casa{ background:linear-gradient(#2b2b52,#0d0d1a); }
   .escena-camino{ background:linear-gradient(#210000,#000); }
   .escena-casino{ background:linear-gradient(#1a001a,#000); }
-
+ 
   .static{
     position:absolute; inset:0; pointer-events:none; opacity:0;
     background-image: repeating-linear-gradient(0deg, rgba(255,255,255,.08) 0px, transparent 2px, transparent 4px);
@@ -51,11 +51,11 @@
   }
   .static.on{ opacity:1; animation:glitchmove .1s steps(2) infinite; }
   @keyframes glitchmove{ 0%{transform:translateY(0);} 100%{transform:translateY(4px);} }
-
+ 
   #narrador{
     font-size:.75em; line-height:2; max-width:80%; color:#ccc; min-height:120px;
   }
-
+ 
   /* ---- Sprites pixel-art (bloques) 8bit ---- */
   .escenario{
     position:relative; width:100%; height:60%;
@@ -78,24 +78,24 @@
   .diablo .cabeza::after{ content:""; position:absolute; top:-16px; right:4px; width:10px; height:20px; background:#600; clip-path:polygon(0 100%,50% 0,100% 100%); }
   .reydado .cabeza{ background:#111; }
   .reydado .cabeza::after{ content:"⚀"; position:absolute; top:-2px; left:14px; font-size:26px; color:#fff; }
-
+ 
   .asmodeo{ width:90px; height:120px; z-index:1; filter:drop-shadow(0 0 14px #b30000); }
   .asmodeo .cabeza{ background:#1a0000; border-color:#b30000; }
   .asmodeo .cabeza::before{ content:""; position:absolute; top:-24px; left:0px; width:14px; height:30px; background:#600; clip-path:polygon(0 100%,60% 0,100% 100%); }
   .asmodeo .cabeza::after{ content:""; position:absolute; top:-24px; right:0px; width:14px; height:30px; background:#600; clip-path:polygon(0 100%,40% 0,100% 100%); }
   .asmodeo .cara{ background:#ff0055; box-shadow:28px 0 0 #ff0055; }
   #cup6{ z-index:2; }
-
+ 
   .flash-recuerdo{
     position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
     background:#000; color:#fff; font-size:.7em; text-align:center; padding:20px;
     opacity:0;
   }
-
+ 
   .izq{ left:15%; } .der{ right:15%; } .centro{ left:50%; transform:translateX(-50%); }
-
+ 
   .titiritero{ position:absolute; bottom:2%; width:100%; text-align:center; }
-
+ 
   /* ---- Caja de dialogo ---- */
   #caja-dialogo{
     position:absolute; bottom:20px; left:5%; width:90%;
@@ -105,9 +105,9 @@
   }
   #caja-dialogo .quien{ color:#00ffcc; margin-bottom:8px; display:block; }
   #caja-dialogo .avanzar{ color:#ff0055; font-size:.9em; float:right; animation:parpadeo 1s infinite; }
-
+ 
   .instruccion{ color:#00ffcc; font-size:.65em; margin-top:16px; }
-
+ 
   /* ---- Mundo abierto (escena 4) ---- */
   #mundo{
     position:relative; width:92%; height:52%; margin-top:14px;
@@ -126,51 +126,63 @@
   .marcador.meta .punto{ background:#ffcc00; box-shadow:0 0 8px #ffcc00; }
   .marcador.visitado{ color:#ff0055; }
   .marcador.visitado .punto{ background:#ff0055; }
-
+ 
   #jugador-mundo{
     position:absolute; width:22px; height:30px; background:#3a6fdb;
     border:3px solid #fff; z-index:5;
   }
   #jugador-mundo::after{ content:""; position:absolute; top:6px; left:5px; width:4px; height:4px; background:#111; border-radius:50%; box-shadow:8px 0 0 #111; }
-
+ 
   #mensaje-mundo{
     min-height:40px; font-size:.55em; color:#00ffcc; margin-top:10px; max-width:90%;
   }
-
+ 
   /* ---- QTE ---- */
   #qte-barra{ width:80%; height:24px; background:#222; border:3px solid #ff0055; margin-top:20px; position:relative; }
   #qte-relleno{ height:100%; width:0%; background:#ff0055; }
-
+ 
   /* ---- Cifrado final ---- */
   #cifrado{ background:#000; }
   #cifrado .bloque{ max-width:85%; font-size:.6em; line-height:2; color:#0f0; margin-bottom:24px; }
   #cifrado .bloque.es{ color:#ffcc00; }
   #cifrado h2{ color:#ff0055; font-size:1em; margin-bottom:20px; }
-
+ 
   #reiniciar{
     margin-top:20px; background:#111; color:#fff; border:3px solid #00ffcc; padding:10px 18px;
     font-family:'Press Start 2P',monospace; font-size:.6em; cursor:pointer;
   }
   #reiniciar:hover{ background:#00ffcc; color:#000; }
-
+ 
   #hud{ position:absolute; top:10px; left:10px; font-size:.5em; color:#555; }
+ 
+  /* ---- Boton volver al menu ---- */
+  #btn-volver{
+    position:fixed; top:12px; left:12px; z-index:9999;
+    background:#111; color:#fff; border:3px solid #ffcc00;
+    font-family:'Press Start 2P',monospace; font-size:.5em;
+    padding:8px 12px; text-decoration:none; display:inline-block;
+    box-shadow:2px 2px 0 #000;
+  }
+  #btn-volver:hover{ background:#ffcc00; color:#111; }
 </style>
 </head>
 <body>
-
+ 
+<a href="../index.html" id="btn-volver">⬅ MENÚ</a>
+ 
 <div id="game">
-
+ 
   <div class="screen active escena-negra" id="titulo">
-    <h1>GREED AND STEAL<br>APOCALIPSIS 3:17</h1>
+    <h1>THE HORROR OF MISERY<br>APOCALIPSIS 3:17</h1>
     <p style="color:#fff;font-size:.6em;">EPISODIO 1</p>
     <p>PRESIONA CUALQUIER TECLA<br>O TOCA LA PANTALLA</p>
   </div>
-
+ 
   <div class="screen escena-negra" id="s1">
     <div class="static" id="static1"></div>
     <div id="narrador"></div>
   </div>
-
+ 
   <div class="screen escena-oficina" id="s2">
     <div class="escenario">
       <div class="sprite diablo centro"><div class="cabeza"></div></div>
@@ -180,13 +192,13 @@
     <div class="static" id="static2"></div>
     <div id="caja-dialogo"><span class="quien"></span><span class="texto"></span><span class="avanzar">▼</span></div>
   </div>
-
+ 
   <div class="screen escena-casa" id="s3">
     <div id="caja-dialogo3" style="position:absolute;bottom:20px;left:5%;width:90%;background:#000;border:4px solid #ffcc00;border-radius:4px;padding:16px;min-height:110px;font-size:.65em;line-height:1.8;color:#fff;text-align:left;">
       <span class="quien"></span><span class="texto"></span><span class="avanzar">▼</span>
     </div>
   </div>
-
+ 
   <div class="screen escena-camino" id="s4">
     <p style="color:#ff0055;font-size:.8em;">ISLA TINTERO — CAMINO AL CASINO</p>
     <p class="instruccion">MUEVE A MUGMAN CON LAS FLECHAS (O WASD). EXPLORA Y LLEGA AL CASINO</p>
@@ -200,7 +212,7 @@
     <div id="mensaje-mundo"></div>
     <div class="static" id="static4"></div>
   </div>
-
+ 
   <div class="screen escena-casino" id="s5">
     <div class="escenario">
       <div class="sprite reydado izq" id="dado"><div class="cabeza"></div></div>
@@ -210,7 +222,7 @@
       <span class="quien"></span><span class="texto"></span><span class="avanzar">▼</span>
     </div>
   </div>
-
+ 
   <div class="screen escena-negra" id="s6">
     <div class="escenario">
       <div class="sprite asmodeo centro" id="asmo6" style="opacity:0;"><div class="cabeza"><div class="cara"></div></div></div>
@@ -221,17 +233,18 @@
     <p class="instruccion" id="qte-instr" style="display:none;">¡PRESIONA ESPACIO RÁPIDO PARA MORDER!</p>
     <div class="flash-recuerdo" id="flash-recuerdo"></div>
   </div>
-
+ 
   <div class="screen escena-negra" id="cifrado">
     <h2>FIN DEL EPISODIO 1</h2>
     <div class="bloque en"></div>
     <div class="bloque es"></div>
     <button id="reiniciar">VOLVER A JUGAR</button>
+    <a href="../index.html" style="display:block;margin-top:16px;color:#00ffcc;font-size:.5em;font-family:'Press Start 2P',monospace;">⬅ VOLVER AL MENÚ</a>
   </div>
-
+ 
   <div id="hud"></div>
 </div>
-
+ 
 <script>
 /* ---------- utilidades ---------- */
 const $ = s => document.querySelector(s);
@@ -261,7 +274,7 @@ function esperarInput(){
     window.addEventListener('click',h,{once:true});
   });
 }
-
+ 
 /* ---------- cifrado (se calcula en vivo, nunca se escribe a mano) ---------- */
 function atbash(s){
   return s.replace(/[a-zA-Z]/g, c=>{
@@ -275,11 +288,11 @@ function cesar(s, shift){
     return String.fromCharCode(((c.charCodeAt(0)-base+shift+26)%26)+base);
   });
 }
-
+ 
 /* ---------- TITULO ---------- */
 mostrar('titulo');
 esperarInput().then(iniciarEscena1);
-
+ 
 /* ---------- ESCENA 1: narrador ---------- */
 async function iniciarEscena1(){
   mostrar('s1');
@@ -291,7 +304,7 @@ async function iniciarEscena1(){
   $('#static1').classList.remove('on');
   iniciarEscena2();
 }
-
+ 
 /* ---------- ESCENA 2: oficina del diablo ---------- */
 const dialogoS2 = [
   ['THE DEVIL','You\'ve done a magnificent job, boys. Now, sign right here, and you shall rule this realm by my side. Unlimited power. No more running.'],
@@ -314,7 +327,7 @@ async function iniciarEscena2(){
   await new Promise(r=>setTimeout(r,900));
   iniciarEscena3();
 }
-
+ 
 /* ---------- ESCENA 3: casa, 8:26am ---------- */
 const dialogoS3 = [
   ['ELDER KETTLE','I got you a newspaper too, Mugs, enjoy the food.'],
@@ -332,7 +345,7 @@ async function iniciarEscena3(){
   }
   iniciarEscena4();
 }
-
+ 
 /* ---------- ESCENA 4: mundo abierto, Isla Tintero ---------- */
 let mundoPos = {x:60, y:260};
 let mundoActivo = false;
@@ -348,7 +361,7 @@ const zonasS4 = [
   {id:'casino', pctX:88, pctY:22, radio:10, visitado:false, meta:true,
     mensaje:'The Casino. Mugman steps inside...'}
 ];
-
+ 
 function iniciarEscena4(){
   mostrar('s4');
   const mundo = $('#mundo');
@@ -358,13 +371,13 @@ function iniciarEscena4(){
   mundoActivo = true;
   window.addEventListener('keydown', moverMundo);
 }
-
+ 
 function actualizarJugadorMundo(){
   const jugador = $('#jugador-mundo');
   jugador.style.left = mundoPos.x+'px';
   jugador.style.top = mundoPos.y+'px';
 }
-
+ 
 function moverMundo(e){
   if(!mundoActivo) return;
   const mundo = $('#mundo');
@@ -376,7 +389,7 @@ function moverMundo(e){
   actualizarJugadorMundo();
   revisarZonasS4();
 }
-
+ 
 async function revisarZonasS4(){
   const mundo = $('#mundo');
   const w = mundo.clientWidth, h = mundo.clientHeight;
@@ -409,7 +422,7 @@ async function revisarZonasS4(){
     }
   }
 }
-
+ 
 /* ---------- ESCENA 5: Rey Dado + glitch ---------- */
 const dialogoS5 = [
   ['KING DICE','Mugman, oh God, please, Son, you have to leave this island. It\'s not safe anymore because of Cuphead; he has a plan now, and that plan is... to kill everyone. Please, Son... LEAVE NO—']
@@ -428,7 +441,7 @@ async function iniciarEscena5(){
   $('#static5').classList.remove('on');
   iniciarEscena6();
 }
-
+ 
 /* ---------- ESCENA 6: aparición de Asmodeo + enfrentamiento final (QTE) ---------- */
 const dialogoAsmodeo = [
   ['ASMODEUS','So this is the little brother... the one worth breaking a family for.'],
@@ -449,7 +462,7 @@ async function iniciarEscena6(){
   const texto6=$('#texto6');
   await escribirMaquina(texto6,'CUPHEAD: "Mugs, where are you?"',20);
   await new Promise(r=>setTimeout(r,600));
-
+ 
   /* Asmodeo aparece detrás de Cuphead */
   const asmo=$('#asmo6');
   asmo.style.transition='opacity .6s';
@@ -457,13 +470,13 @@ async function iniciarEscena6(){
   $('#static5') ; // no-op, mantiene referencia previa
   texto6.textContent='';
   await new Promise(r=>setTimeout(r,700));
-
+ 
   for(const [quien,linea] of dialogoAsmodeo){
     texto6.style.color = quien==='ASMODEUS' ? '#ff0055' : '#fff';
     await escribirMaquina(texto6, quien+': "'+linea+'"', 18);
     await esperarInput();
   }
-
+ 
   /* Flashbacks rapidos que tapan la fusion grotesca de Asmodeo con Cuphead */
   const flash=$('#flash-recuerdo');
   flash.style.transition='none';
@@ -484,7 +497,7 @@ async function iniciarEscena6(){
   flash.style.opacity='0';
   asmo.style.opacity='0';
   texto6.style.color='#fff';
-
+ 
   await escribirMaquina(texto6,'CUPHEAD: "THERE YOU ARE, FUCKING HUMAN."',20);
   $('#cup6').style.left='50%';
   await new Promise(r=>setTimeout(r,400));
@@ -519,7 +532,7 @@ async function finalEscena6(){
   await new Promise(r=>setTimeout(r,1800));
   mostrarCifrado();
 }
-
+ 
 /* ---------- PANTALLA FINAL: cifrado bilingüe ---------- */
 function mostrarCifrado(){
   mostrar('cifrado');
@@ -528,7 +541,7 @@ function mostrarCifrado(){
   $('#cifrado .bloque.en').innerHTML = 'ENGLISH (ATBASH):<br>' + atbash(mensajeEN);
   $('#cifrado .bloque.es').innerHTML = 'ESPAÑOL (CÉSAR +5):<br>' + cesar(mensajeES,5);
 }
-
+ 
 $('#reiniciar').addEventListener('click', ()=>location.reload());
 </script>
 </body>
