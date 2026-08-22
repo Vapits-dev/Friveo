@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Greed and Steal: Apocalipsis 3:17 - Ep.1</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+  * { box-sizing: border-box; }
+  html,body{
+    margin:0; padding:0; width:100%; height:100%;
+    background:#000; overflow:hidden;
+    font-family:'Press Start 2P', monospace;
+    image-rendering: pixelated;
+  }
+  #game{
+    position:relative;
+    width:100%; height:100vh;
+    display:flex; align-items:center; justify-content:center;
+    background:#000;
+  }
+  .screen{
+    position:absolute; inset:0;
+    display:none;
+    flex-direction:column; align-items:center; justify-content:center;
+    color:#fff; text-align:center;
+    padding:20px;
+  }
+  .screen.active{ display:flex; }
+
+  /* ---- Titulo ---- */
+  #titulo{ background:#0f0f0f; }
+  #titulo h1{
+    color:#ffcc00; font-size:1.4em; text-shadow:3px 3px #ff0055;
+    line-height:1.6; max-width:90%;
+  }
+  #titulo p{ color:#00ffcc; font-size:.7em; margin-top:30px; animation:parpadeo 1.2s infinite; }
+  @keyframes parpadeo{ 0%,100%{opacity:1;} 50%{opacity:0;} }
+
+  /* ---- Fondos de escena ---- */
+  .escena-negra{ background:#000; }
+  .escena-oficina{ background:linear-gradient(#3a0000,#000); }
+  .escena-casa{ background:linear-gradient(#2b2b52,#0d0d1a); }
+  .escena-camino{ background:linear-gradient(#210000,#000); }
+  .escena-casino{ background:linear-gradient(#1a001a,#000); }
+
+  .static{
+    position:absolute; inset:0; pointer-events:none; opacity:0;
+    background-image: repeating-linear-gradient(0deg, rgba(255,255,255,.08) 0px, transparent 2px, transparent 4px);
+    mix-blend-mode: overlay;
+  }
+  .static.on{ opacity:1; animation:glitchmove .1s steps(2) infinite; }
+  @keyframes glitchmove{ 0%{transform:translateY(0);} 100%{transform:translateY(4px);} }
+
+  #narrador{
+    font-size:.75em; line-height:2; max-width:80%; color:#ccc; min-height:120px;
+  }
+
+  /* ---- Sprites pixel-art (bloques) 8bit ---- */
+  .escenario{
+    position:relative; width:100%; height:60%;
+  }
+  .sprite{
+    position:absolute; bottom:10%;
+    width:64px; height:80px;
+    image-rendering:pixelated;
+  }
+  .cabeza{ width:64px; height:44px; border-radius:50% 50% 40% 40%; position:relative; border:4px solid #111; }
+  .cuerpo{ width:44px; height:36px; margin:0 auto; background:#fff; border:4px solid #111; border-top:none; }
+  .cara{ position:absolute; top:14px; left:10px; width:8px; height:8px; background:#111; border-radius:50%; box-shadow:28px 0 0 #111; }
+  .cuphead .cabeza{ background:#fff; }
+  .cuphead .cabeza::after{ content:""; position:absolute; top:-14px; left:16px; width:32px; height:20px; background:#e0392b; border:4px solid #111; border-radius:6px 6px 0 0; }
+  .mugman .cabeza{ background:#fff; }
+  .mugman .cabeza::after{ content:""; position:absolute; top:-14px; left:16px; width:32px; height:20px; background:#3a6fdb; border:4px solid #111; border-radius:6px 6px 0 0; }
+  .diablo{ width:70px; height:100px; }
+  .diablo .cabeza{ background:#b30000; }
+  .diablo .cabeza::before{ content:""; position:absolute; top:-16px; left:4px; width:10px; height:20px; background:#600; clip-path:polygon(0 100%,50% 0,100% 100%); }
+  .diablo .cabeza::after{ content:""; position:absolute; top:-16px; right:4px; width:10px; height:20px; background:#600; clip-path:polygon(0 100%,50% 0,100% 100%); }
+  .reydado .cabeza{ background:#111; }
+  .reydado .cabeza::after{ content:"⚀"; position:absolute; top:-2px; left:14px; font-size:26px; color:#fff; }
+
+  .asmodeo{ width:90px; height:120px; z-index:1; filter:drop-shadow(0 0 14px #b30000); }
+  .asmodeo .cabeza{ background:#1a0000; border-color:#b30000; }
+  .asmodeo .cabeza::before{ content:""; position:absolute; top:-24px; left:0px; width:14px; height:30px; background:#600; clip-path:polygon(0 100%,60% 0,100% 100%); }
+  .asmodeo .cabeza::after{ content:""; position:absolute; top:-24px; right:0px; width:14px; height:30px; background:#600; clip-path:polygon(0 100%,40% 0,100% 100%); }
+  .asmodeo .cara{ background:#ff0055; box-shadow:28px 0 0 #ff0055; }
+  #cup6{ z-index:2; }
+
+  .flash-recuerdo{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    background:#000; color:#fff; font-size:.7em; text-align:center; padding:20px;
+    opacity:0;
+  }
+
+  .izq{ left:15%; } .der{ right:15%; } .centro{ left:50%; transform:translateX(-50%); }
+
+  .titiritero{ position:absolute; bottom:2%; width:100%; text-align:center; }
+
+  /* ---- Caja de dialogo ---- */
+  #caja-dialogo{
+    position:absolute; bottom:20px; left:5%; width:90%;
+    background:#000; border:4px solid #ffcc00; border-radius:4px;
+    padding:16px; min-height:110px; font-size:.65em; line-height:1.8; color:#fff;
+    text-align:left;
+  }
+  #caja-dialogo .quien{ color:#00ffcc; margin-bottom:8px; display:block; }
+  #caja-dialogo .avanzar{ color:#ff0055; font-size:.9em; float:right; animation:parpadeo 1s infinite; }
+
+  .instruccion{ color:#00ffcc; font-size:.65em; margin-top:16px; }
+
+  /* ---- Mundo abierto (escena 4) ---- */
+  #mundo{
+    position:relative; width:92%; height:52%; margin-top:14px;
+    background:
+      radial-gradient(circle at 20% 80%, rgba(179,0,0,.18), transparent 40%),
+      radial-gradient(circle at 80% 20%, rgba(255,204,0,.12), transparent 40%),
+      #0a0a0a;
+    border:3px solid #444; overflow:hidden;
+  }
+  .marcador{
+    position:absolute; transform:translate(-50%,-50%); text-align:center;
+    font-size:.42em; color:#888; line-height:1.6; pointer-events:none;
+  }
+  .marcador .punto{ width:10px; height:10px; background:#666; border-radius:50%; margin:0 auto 4px; }
+  .marcador.meta{ color:#ffcc00; }
+  .marcador.meta .punto{ background:#ffcc00; box-shadow:0 0 8px #ffcc00; }
+  .marcador.visitado{ color:#ff0055; }
+  .marcador.visitado .punto{ background:#ff0055; }
+
+  #jugador-mundo{
+    position:absolute; width:22px; height:30px; background:#3a6fdb;
+    border:3px solid #fff; z-index:5;
+  }
+  #jugador-mundo::after{ content:""; position:absolute; top:6px; left:5px; width:4px; height:4px; background:#111; border-radius:50%; box-shadow:8px 0 0 #111; }
+
+  #mensaje-mundo{
+    min-height:40px; font-size:.55em; color:#00ffcc; margin-top:10px; max-width:90%;
+  }
+
+  /* ---- QTE ---- */
+  #qte-barra{ width:80%; height:24px; background:#222; border:3px solid #ff0055; margin-top:20px; position:relative; }
+  #qte-relleno{ height:100%; width:0%; background:#ff0055; }
+
+  /* ---- Cifrado final ---- */
+  #cifrado{ background:#000; }
+  #cifrado .bloque{ max-width:85%; font-size:.6em; line-height:2; color:#0f0; margin-bottom:24px; }
+  #cifrado .bloque.es{ color:#ffcc00; }
+  #cifrado h2{ color:#ff0055; font-size:1em; margin-bottom:20px; }
+
+  #reiniciar{
+    margin-top:20px; background:#111; color:#fff; border:3px solid #00ffcc; padding:10px 18px;
+    font-family:'Press Start 2P',monospace; font-size:.6em; cursor:pointer;
+  }
+  #reiniciar:hover{ background:#00ffcc; color:#000; }
+
+  #hud{ position:absolute; top:10px; left:10px; font-size:.5em; color:#555; }
+</style>
+</head>
+<body>
+
+<div id="game">
+
+  <div class="screen active escena-negra" id="titulo">
+    <h1>GREED AND STEAL<br>APOCALIPSIS 3:17</h1>
+    <p style="color:#fff;font-size:.6em;">EPISODIO 1</p>
+    <p>PRESIONA CUALQUIER TECLA<br>O TOCA LA PANTALLA</p>
+  </div>
+
+  <div class="screen escena-negra" id="s1">
+    <div class="static" id="static1"></div>
+    <div id="narrador"></div>
+  </div>
+
+  <div class="screen escena-oficina" id="s2">
+    <div class="escenario">
+      <div class="sprite diablo centro"><div class="cabeza"></div></div>
+      <div class="sprite cuphead izq"><div class="cabeza"><div class="cara"></div></div><div class="cuerpo"></div></div>
+      <div class="sprite mugman der"><div class="cabeza"><div class="cara"></div></div><div class="cuerpo"></div></div>
+    </div>
+    <div class="static" id="static2"></div>
+    <div id="caja-dialogo"><span class="quien"></span><span class="texto"></span><span class="avanzar">▼</span></div>
+  </div>
+
+  <div class="screen escena-casa" id="s3">
+    <div id="caja-dialogo3" style="position:absolute;bottom:20px;left:5%;width:90%;background:#000;border:4px solid #ffcc00;border-radius:4px;padding:16px;min-height:110px;font-size:.65em;line-height:1.8;color:#fff;text-align:left;">
+      <span class="quien"></span><span class="texto"></span><span class="avanzar">▼</span>
+    </div>
+  </div>
+
+  <div class="screen escena-camino" id="s4">
+    <p style="color:#ff0055;font-size:.8em;">ISLA TINTERO — CAMINO AL CASINO</p>
+    <p class="instruccion">MUEVE A MUGMAN CON LAS FLECHAS (O WASD). EXPLORA Y LLEGA AL CASINO</p>
+    <div id="mundo">
+      <div class="marcador" id="marca-t1" style="left:12%;top:78%;"><div class="punto"></div>ISLA TINTERO I</div>
+      <div class="marcador" id="marca-t2" style="left:38%;top:28%;"><div class="punto"></div>ISLA TINTERO II</div>
+      <div class="marcador" id="marca-t3" style="left:62%;top:70%;"><div class="punto"></div>ISLA TINTERO III</div>
+      <div class="marcador meta" id="marca-casino" style="left:88%;top:22%;"><div class="punto"></div>🎰 CASINO</div>
+      <div id="jugador-mundo"></div>
+    </div>
+    <div id="mensaje-mundo"></div>
+    <div class="static" id="static4"></div>
+  </div>
+
+  <div class="screen escena-casino" id="s5">
+    <div class="escenario">
+      <div class="sprite reydado izq" id="dado"><div class="cabeza"></div></div>
+    </div>
+    <div class="static" id="static5"></div>
+    <div id="caja-dialogo5" style="position:absolute;bottom:20px;left:5%;width:90%;background:#000;border:4px solid #ffcc00;border-radius:4px;padding:16px;min-height:110px;font-size:.65em;line-height:1.8;color:#fff;text-align:left;">
+      <span class="quien"></span><span class="texto"></span><span class="avanzar">▼</span>
+    </div>
+  </div>
+
+  <div class="screen escena-negra" id="s6">
+    <div class="escenario">
+      <div class="sprite asmodeo centro" id="asmo6" style="opacity:0;"><div class="cabeza"><div class="cara"></div></div></div>
+      <div class="sprite cuphead centro" id="cup6"><div class="cabeza"><div class="cara"></div></div><div class="cuerpo"></div></div>
+    </div>
+    <p id="texto6" style="color:#fff;font-size:.7em;"></p>
+    <div id="qte-barra"><div id="qte-relleno"></div></div>
+    <p class="instruccion" id="qte-instr" style="display:none;">¡PRESIONA ESPACIO RÁPIDO PARA MORDER!</p>
+    <div class="flash-recuerdo" id="flash-recuerdo"></div>
+  </div>
+
+  <div class="screen escena-negra" id="cifrado">
+    <h2>FIN DEL EPISODIO 1</h2>
+    <div class="bloque en"></div>
+    <div class="bloque es"></div>
+    <button id="reiniciar">VOLVER A JUGAR</button>
+  </div>
+
+  <div id="hud"></div>
+</div>
+
+<script>
+/* ---------- utilidades ---------- */
+const $ = s => document.querySelector(s);
+function mostrar(id){
+  document.querySelectorAll('.screen').forEach(e=>e.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function escribirMaquina(el, texto, vel=25){
+  return new Promise(resolve=>{
+    el.textContent='';
+    let i=0;
+    const t=setInterval(()=>{
+      el.textContent+=texto[i];
+      i++;
+      if(i>=texto.length){ clearInterval(t); resolve(); }
+    },vel);
+  });
+}
+function esperarInput(){
+  return new Promise(resolve=>{
+    function h(){
+      window.removeEventListener('keydown',h);
+      window.removeEventListener('click',h);
+      resolve();
+    }
+    window.addEventListener('keydown',h,{once:true});
+    window.addEventListener('click',h,{once:true});
+  });
+}
+
+/* ---------- cifrado (se calcula en vivo, nunca se escribe a mano) ---------- */
+function atbash(s){
+  return s.replace(/[a-zA-Z]/g, c=>{
+    const base = (c === c.toLowerCase()) ? 97 : 65;
+    return String.fromCharCode(base + (25 - (c.charCodeAt(0)-base)));
+  });
+}
+function cesar(s, shift){
+  return s.replace(/[a-zA-Z]/g, c=>{
+    const base = (c === c.toLowerCase()) ? 97 : 65;
+    return String.fromCharCode(((c.charCodeAt(0)-base+shift+26)%26)+base);
+  });
+}
+
+/* ---------- TITULO ---------- */
+mostrar('titulo');
+esperarInput().then(iniciarEscena1);
+
+/* ---------- ESCENA 1: narrador ---------- */
+async function iniciarEscena1(){
+  mostrar('s1');
+  $('#static1').classList.add('on');
+  const narrador = $('#s1 #narrador');
+  await escribirMaquina(narrador,
+    'Tras vencer cada obstáculo y recolectar cada alma, los hermanos por fin se encontraban frente al mismísimo Infierno de Isla Tintero. Pero cuando el Diablo ofreció su maldito trato... la codicia resultó más fuerte que la hermandad.', 22);
+  await esperarInput();
+  $('#static1').classList.remove('on');
+  iniciarEscena2();
+}
+
+/* ---------- ESCENA 2: oficina del diablo ---------- */
+const dialogoS2 = [
+  ['THE DEVIL','You\'ve done a magnificent job, boys. Now, sign right here, and you shall rule this realm by my side. Unlimited power. No more running.'],
+  ['CUPHEAD','Deal... We\'re in.'],
+  ['MUGMAN','CUPHEAD, NO! What are you doing?! That wasn\'t the plan! We have to destroy it!!'],
+  ['CUPHEAD','Don\'t be a coward, Mugs. It\'s time to take what\'s ours.'],
+  ['MUGMAN','You... YOU\'RE CRAZY! I\'M NOT DOING THIS!'],
+  ['THE DEVIL','A wise choice, Cuphead... As for you, brother... Let him run. He won\'t get far.'],
+  ['MUGMAN','I HATE YOU CUPHEAD!']
+];
+async function iniciarEscena2(){
+  mostrar('s2');
+  const caja=$('#s2 #caja-dialogo');
+  for(const [quien,texto] of dialogoS2){
+    caja.querySelector('.quien').textContent=quien;
+    await escribirMaquina(caja.querySelector('.texto'),texto,18);
+    await esperarInput();
+  }
+  $('#static2').classList.add('on');
+  await new Promise(r=>setTimeout(r,900));
+  iniciarEscena3();
+}
+
+/* ---------- ESCENA 3: casa, 8:26am ---------- */
+const dialogoS3 = [
+  ['ELDER KETTLE','I got you a newspaper too, Mugs, enjoy the food.'],
+  ['MUGMAN','Thanks grandpa, you enjoy the food too.'],
+  ['ISLA TINTERO NEWS','Breaking news: the bodies of the following people were just found: Sal Spudder, Ollie Bulb, Chauncey Chantenay, Goopy Le Grande, Hilda Berg, Cagney Carnation, Ribby and Croaks. Their bodies were found near the Casino. The only suspects are King Dice and the Casino owner, Cuphead.'],
+  ['ELDER KETTLE','Please, don\'t take too long, I don\'t want to lose you anyway...']
+];
+async function iniciarEscena3(){
+  mostrar('s3');
+  const caja=$('#s3 #caja-dialogo3');
+  for(const [quien,texto] of dialogoS3){
+    caja.querySelector('.quien').textContent=quien;
+    await escribirMaquina(caja.querySelector('.texto'),texto,16);
+    await esperarInput();
+  }
+  iniciarEscena4();
+}
+
+/* ---------- ESCENA 4: mundo abierto, Isla Tintero ---------- */
+let mundoPos = {x:60, y:260};
+let mundoActivo = false;
+const velocidad = 6;
+const zonasS4 = [
+  {id:'t1', pctX:12, pctY:78, radio:11, visitado:false,
+    mensaje:'Isla Tintero I is empty. Just the wind, and something wrong in the air.'},
+  {id:'t2', pctX:38, pctY:28, radio:11, visitado:false,
+    mensaje:'People running, screaming. Something chased Mugman through the static — then the tape corrects itself.',
+    glitch:true},
+  {id:'t3', pctX:62, pctY:70, radio:11, visitado:false,
+    mensaje:'More people running past. The chaos grows closer to the Casino.'},
+  {id:'casino', pctX:88, pctY:22, radio:10, visitado:false, meta:true,
+    mensaje:'The Casino. Mugman steps inside...'}
+];
+
+function iniciarEscena4(){
+  mostrar('s4');
+  const mundo = $('#mundo');
+  mundoPos = {x: mundo.clientWidth*0.08, y: mundo.clientHeight*0.75};
+  zonasS4.forEach(z=>{ z.visitado=false; document.getElementById('marca-'+z.id).classList.remove('visitado'); });
+  actualizarJugadorMundo();
+  mundoActivo = true;
+  window.addEventListener('keydown', moverMundo);
+}
+
+function actualizarJugadorMundo(){
+  const jugador = $('#jugador-mundo');
+  jugador.style.left = mundoPos.x+'px';
+  jugador.style.top = mundoPos.y+'px';
+}
+
+function moverMundo(e){
+  if(!mundoActivo) return;
+  const mundo = $('#mundo');
+  const maxX = mundo.clientWidth-22, maxY = mundo.clientHeight-30;
+  if(e.key==='ArrowUp'||e.key==='w') mundoPos.y = Math.max(0, mundoPos.y-velocidad);
+  if(e.key==='ArrowDown'||e.key==='s') mundoPos.y = Math.min(maxY, mundoPos.y+velocidad);
+  if(e.key==='ArrowLeft'||e.key==='a') mundoPos.x = Math.max(0, mundoPos.x-velocidad);
+  if(e.key==='ArrowRight'||e.key==='d') mundoPos.x = Math.min(maxX, mundoPos.x+velocidad);
+  actualizarJugadorMundo();
+  revisarZonasS4();
+}
+
+async function revisarZonasS4(){
+  const mundo = $('#mundo');
+  const w = mundo.clientWidth, h = mundo.clientHeight;
+  for(const z of zonasS4){
+    if(z.visitado) continue;
+    const zx = w*z.pctX/100, zy = h*z.pctY/100;
+    const dx = (mundoPos.x+11)-zx, dy=(mundoPos.y+15)-zy;
+    const dist = Math.sqrt(dx*dx+dy*dy);
+    if(dist < z.radio*3){
+      z.visitado = true;
+      document.getElementById('marca-'+z.id).classList.add('visitado');
+      if(z.meta){
+        mundoActivo = false;
+        window.removeEventListener('keydown', moverMundo);
+        const msg = $('#mensaje-mundo');
+        await escribirMaquina(msg, z.mensaje, 20);
+        $('#static4').classList.add('on');
+        await new Promise(r=>setTimeout(r,900));
+        $('#static4').classList.remove('on');
+        iniciarEscena5();
+      } else {
+        const msg = $('#mensaje-mundo');
+        escribirMaquina(msg, z.mensaje, 18);
+        if(z.glitch){
+          $('#static4').classList.add('on');
+          setTimeout(()=>$('#static4').classList.remove('on'), 500);
+        }
+      }
+      return;
+    }
+  }
+}
+
+/* ---------- ESCENA 5: Rey Dado + glitch ---------- */
+const dialogoS5 = [
+  ['KING DICE','Mugman, oh God, please, Son, you have to leave this island. It\'s not safe anymore because of Cuphead; he has a plan now, and that plan is... to kill everyone. Please, Son... LEAVE NO—']
+];
+async function iniciarEscena5(){
+  mostrar('s5');
+  const caja=$('#s5 #caja-dialogo5');
+  for(const [quien,texto] of dialogoS5){
+    caja.querySelector('.quien').textContent=quien;
+    await escribirMaquina(caja.querySelector('.texto'),texto,18);
+  }
+  await new Promise(r=>setTimeout(r,600));
+  $('#static5').classList.add('on');
+  $('#dado').style.filter='brightness(0.2) hue-rotate(180deg)';
+  await new Promise(r=>setTimeout(r,700));
+  $('#static5').classList.remove('on');
+  iniciarEscena6();
+}
+
+/* ---------- ESCENA 6: aparición de Asmodeo + enfrentamiento final (QTE) ---------- */
+const dialogoAsmodeo = [
+  ['ASMODEUS','So this is the little brother... the one worth breaking a family for.'],
+  ['ASMODEUS','Weak. Sentimental. Replaceable.'],
+  ['ASMODEUS','This body will make a far better throne for a Prince of Hell than the fool who invited me in.'],
+  ['ASMODEUS','Cuphead\'s flesh is mine now. What\'s left of him... won\'t be needing it.']
+];
+const recuerdosFlash = [
+  'Two brothers. One cup, one mug.',
+  'Racing across Inkwell Isle, laughing.',
+  'Splitting the last slice of pie in half.',
+  '"We\'ll always look out for each other, Mugs."',
+  '...'
+];
+let qteActivo=false, qteValor=0, qteIntervalo=null;
+async function iniciarEscena6(){
+  mostrar('s6');
+  const texto6=$('#texto6');
+  await escribirMaquina(texto6,'CUPHEAD: "Mugs, where are you?"',20);
+  await new Promise(r=>setTimeout(r,600));
+
+  /* Asmodeo aparece detrás de Cuphead */
+  const asmo=$('#asmo6');
+  asmo.style.transition='opacity .6s';
+  asmo.style.opacity='1';
+  $('#static5') ; // no-op, mantiene referencia previa
+  texto6.textContent='';
+  await new Promise(r=>setTimeout(r,700));
+
+  for(const [quien,linea] of dialogoAsmodeo){
+    texto6.style.color = quien==='ASMODEUS' ? '#ff0055' : '#fff';
+    await escribirMaquina(texto6, quien+': "'+linea+'"', 18);
+    await esperarInput();
+  }
+
+  /* Flashbacks rapidos que tapan la fusion grotesca de Asmodeo con Cuphead */
+  const flash=$('#flash-recuerdo');
+  flash.style.transition='none';
+  for(const recuerdo of recuerdosFlash){
+    flash.textContent=recuerdo;
+    flash.style.opacity='1';
+    await new Promise(r=>setTimeout(r,260));
+    flash.style.opacity='0';
+    await new Promise(r=>setTimeout(r,90));
+  }
+  /* corte a estatica total: aqui ocurre, fuera de pantalla, la fusion */
+  flash.textContent='';
+  flash.style.background='#fff';
+  flash.style.opacity='1';
+  await new Promise(r=>setTimeout(r,120));
+  flash.style.background='#000';
+  await new Promise(r=>setTimeout(r,300));
+  flash.style.opacity='0';
+  asmo.style.opacity='0';
+  texto6.style.color='#fff';
+
+  await escribirMaquina(texto6,'CUPHEAD: "THERE YOU ARE, FUCKING HUMAN."',20);
+  $('#cup6').style.left='50%';
+  await new Promise(r=>setTimeout(r,400));
+  texto6.textContent='He\'s strangling you!';
+  $('#qte-instr').style.display='block';
+  qteActivo=true; qteValor=0;
+  $('#qte-relleno').style.width='0%';
+  qteIntervalo=setInterval(()=>{
+    qteValor=Math.max(0,qteValor-2);
+    $('#qte-relleno').style.width=qteValor+'%';
+    if(qteValor<=0 && !qteGanado){
+      // el jugador no reacciona lo bastante rápido, se le da otra oportunidad
+    }
+  },200);
+  window.addEventListener('keydown',morder);
+}
+let qteGanado=false;
+function morder(e){
+  if(e.code!=='Space'||!qteActivo) return;
+  qteValor=Math.min(100,qteValor+14);
+  $('#qte-relleno').style.width=qteValor+'%';
+  if(qteValor>=100 && !qteGanado){
+    qteGanado=true; qteActivo=false;
+    clearInterval(qteIntervalo);
+    window.removeEventListener('keydown',morder);
+    finalEscena6();
+  }
+}
+async function finalEscena6(){
+  $('#qte-instr').style.display='none';
+  await escribirMaquina($('#texto6'),'Mugman bites down on the arm with everything he has. Cuphead lets go. Mugman runs, leaving the camera behind...',18);
+  await new Promise(r=>setTimeout(r,1800));
+  mostrarCifrado();
+}
+
+/* ---------- PANTALLA FINAL: cifrado bilingüe ---------- */
+function mostrarCifrado(){
+  mostrar('cifrado');
+  const mensajeEN = "if you seek the truth of what wears cuphead's face now, go to the wikipedia page of asmodeus";
+  const mensajeES = "si buscas la verdad sobre quien lleva ahora el rostro de cuphead, busca en wikipedia a asmodeo";
+  $('#cifrado .bloque.en').innerHTML = 'ENGLISH (ATBASH):<br>' + atbash(mensajeEN);
+  $('#cifrado .bloque.es').innerHTML = 'ESPAÑOL (CÉSAR +5):<br>' + cesar(mensajeES,5);
+}
+
+$('#reiniciar').addEventListener('click', ()=>location.reload());
+</script>
+</body>
+</html>
